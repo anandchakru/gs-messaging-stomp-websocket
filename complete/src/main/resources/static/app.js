@@ -13,18 +13,17 @@ function setConnected(connected) {
 }
 
 function connect() {
-	$.get("/subscribe4PrivateMsgs", function(data) {
-		debugger;
+	$.get("/subscribe4PrivateMsgs", function(userId) {
 	    var socket = new SockJS('/gs-guide-websocket');
 	    stompClient = Stomp.over(socket);
 	    stompClient.connect({}, function (frame) {
 	        setConnected(true);
 	        console.log('Connected: ' + frame);
 	        stompClient.subscribe('/topic/greetings', function (greeting) {
-	            showGreeting(JSON.parse(greeting.body).content);
+	            showGreeting('Pub: ' + JSON.parse(greeting.body).content);
 	        });
 	        stompClient.subscribe('/user/queue/private', function (greeting) {
-	            showGreeting(JSON.parse(greeting.body).content);
+	            showGreeting('Pri: ' + JSON.parse(greeting.body).content);
 	        });
 	    });
     });
