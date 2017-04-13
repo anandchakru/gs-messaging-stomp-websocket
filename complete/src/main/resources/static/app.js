@@ -14,12 +14,12 @@ function setConnected(connected) {
 
 function connect() {
 	$.get("/subscribe4PrivateMsgs", function(userId) {
-	    var socket = new SockJS('/gs-guide-websocket');
+	    var socket = new SockJS('/websocketapi');
 	    stompClient = Stomp.over(socket);
 	    stompClient.connect({}, function (frame) {
 	        setConnected(true);
 	        console.log('Connected: ' + frame);
-	        stompClient.subscribe('/topic/greetings', function (greeting) {
+	        stompClient.subscribe('/topic/public', function (greeting) {
 	            showGreeting('Pub: ' + JSON.parse(greeting.body).content);
 	        });
 	        stompClient.subscribe('/user/queue/private', function (greeting) {
@@ -38,7 +38,11 @@ function disconnect() {
 }
 
 function sendName() {
-    stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val()}));
+    stompClient.send("/app/public", {}, JSON.stringify({'name': $("#name").val()}));
+}
+
+function sendPrivateMsg() {
+    stompClient.send("/app/private", {}, JSON.stringify({'name': $("#name").val()}));
 }
 
 function showGreeting(message) {
@@ -52,5 +56,6 @@ $(function () {
     $( "#connect" ).click(function() { connect(); });
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#send" ).click(function() { sendName(); });
+    $( "#sendPrivate" ).click(function() { sendPrivateMsg(); });
 });
 
