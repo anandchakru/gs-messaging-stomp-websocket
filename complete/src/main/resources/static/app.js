@@ -37,13 +37,13 @@ function fnStompSetup(userId){
     });
 }
 function connect() {
-	$.get("/subscribe4PrivateMsgs", fnStompSetup());
+	$.get("/subscribe4PrivateMsgs",{"_":$.now() }, fnStompSetup());
 }
 function connect1() {
-	$.get("/lessAndSlow", fnStompSetup());
+	$.get("/lessAndSlow",{"_":$.now() }, fnStompSetup());
 }
 function connect2() {
-	$.get("/lotsAndFast", fnStompSetup());
+	$.get("/lotsAndFast",{"_":$.now() }, fnStompSetup());
 }
 
 function disconnect() {
