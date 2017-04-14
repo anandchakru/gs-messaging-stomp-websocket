@@ -77,6 +77,8 @@ public class ProcessingController {
 				hugeProcessStatusEvent.setStatus("Aborted with Exception: " + e.getMessage());
 				handleHugeProcessStatusEvent(hugeProcessStatusEvent);
 				e.printStackTrace();
+			} finally {
+				requests.remove(sessionId);
 			}
 		});
 	}
