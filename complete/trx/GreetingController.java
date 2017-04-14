@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
@@ -16,19 +16,21 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import hello.model.HugeProcessStatusEvent;
 import hello.model.WebSocketReq;
 import hello.model.WebSocketRsp;
 
 @Controller
-public class GreetingController implements ApplicationListener<SessionDisconnectEvent> {
+public class GreetingController {
 	@Autowired
 	private SimpMessagingTemplate messagingTemplate;
-	@Autowired
-	private WebSocketMessagingService webSocketMessagingService;
 	private Set<String> users = new HashSet<>();
+	@Autowired
+	private HugeProcessingService processingService;
 
 	@GetMapping("/subscribe4PrivateMsgs")
-	public @ResponseBody String enablePrivateMessages(HttpSession session) {
+	public @ResponseBody String enablePrivateMessages(HttpSession session) throws InterruptedException {
+		processingService.process(new HugeProcessStatusEvent(session.getId(), "Started"));
 		String sessionId = session.getId();
 		users.add(sessionId);
 		return sessionId;
@@ -65,7 +67,7 @@ public class GreetingController implements ApplicationListener<SessionDisconnect
 	/**
 	 * Listen on websocket-disconnects, to remove it from {@link hello.GreetingController.users}
 	 */
-	@Override
+	@EventListener
 	public void onApplicationEvent(SessionDisconnectEvent sessionDisconnectEvent) {
 		if (sessionDisconnectEvent.getUser() != null && sessionDisconnectEvent.getUser().getName() != null) {
 			users.remove(sessionDisconnectEvent.getUser().getName());

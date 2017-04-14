@@ -54,7 +54,7 @@ function sendPrivateMsg() {
 }
 
 function showGreeting(message) {
-    $("#greetings").prepend("<tr><td>" + message + "</td></tr>");
+    $("#greetings").append("<tr><td>" + message + "</td></tr>");
 }
 
 $(function () {
