@@ -9,15 +9,16 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
+import hello.model.WebSocketPrincipal;
 
 @Service
 public class SessionBasedHandshakeHandler extends DefaultHandshakeHandler {
-	private HttpSession session() {
+	private HttpSession httpSession() {
 		return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession(true);
 	}
 	@Override
 	protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) {
-		return new User(session().getId());
+		return new WebSocketPrincipal(httpSession().getId());
 	}
 }

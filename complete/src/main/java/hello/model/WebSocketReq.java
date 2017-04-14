@@ -1,11 +1,11 @@
-package hello;
+package hello.model;
 
-public class HelloMessage {
+public class WebSocketReq {
 	private String name;
 
-	public HelloMessage() {
+	public WebSocketReq() {
 	}
-	public HelloMessage(String name) {
+	public WebSocketReq(String name) {
 		this.name = name;
 	}
 	public String getName() {

@@ -1,11 +1,11 @@
-package hello;
+package hello.model;
 
 import java.security.Principal;
 
-public class User implements Principal {
+public class WebSocketPrincipal implements Principal {
 	private String name;
 
-	public User(String name) {
+	public WebSocketPrincipal(String name) {
 		this.name = name;
 	}
 	@Override

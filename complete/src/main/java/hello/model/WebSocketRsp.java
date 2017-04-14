@@ -1,11 +1,11 @@
-package hello;
+package hello.model;
 
-public class Greeting {
+public class WebSocketRsp {
 	private String content;
 
-	public Greeting() {
+	public WebSocketRsp() {
 	}
-	public Greeting(String content) {
+	public WebSocketRsp(String content) {
 		this.content = content;
 	}
 	public String getContent() {

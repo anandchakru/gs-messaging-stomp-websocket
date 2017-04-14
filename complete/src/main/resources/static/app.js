@@ -12,6 +12,11 @@ function setConnected(connected) {
     $("#greetings").html("");
 }
 
+function logout() {
+	$.get("/logout", function(userId) {
+		showGreeting(userId + ' loggedout');
+	});
+}
 function connect() {
 	$.get("/subscribe4PrivateMsgs", function(userId) {
 	    var socket = new SockJS('/websocketapi');
@@ -25,6 +30,9 @@ function connect() {
 	        stompClient.subscribe('/user/queue/private', function (greeting) {
 	            showGreeting('Pri: ' + JSON.parse(greeting.body).content);
 	        });
+	    }, function(message){
+	    	console.log('Server disconnected the WebSocket');
+	    	setConnected(false);
 	    });
     });
 }
@@ -57,5 +65,6 @@ $(function () {
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#send" ).click(function() { sendName(); });
     $( "#sendPrivate" ).click(function() { sendPrivateMsg(); });
+    $( "#logout" ).click(function() { logout(); });
 });
 
