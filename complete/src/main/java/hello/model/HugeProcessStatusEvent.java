@@ -8,6 +8,7 @@ public class HugeProcessStatusEvent implements Serializable {
 	private String sessionId;
 	private String status;
 	private boolean isCompleted;
+	private int processNumber = 1;
 
 	public HugeProcessStatusEvent() {
 		super();
@@ -40,5 +41,11 @@ public class HugeProcessStatusEvent implements Serializable {
 	}
 	public void setGenerationId(String generationId) {
 		this.generationId = generationId;
+	}
+	public int getProcessNumber() {
+		return processNumber;
+	}
+	public void setProcessNumber(int processNumber) {
+		this.processNumber = processNumber;
 	}
 }

@@ -32,8 +32,7 @@ public class HugeProcessingService {
 	}
 	public void process2(HugeProcessStatusEvent hugeProcessStatusEvent)
 			throws InterruptedException, IllegalArgumentException {
-		for (int i = 0; i < 10; i++) {
-			//induceException2();
+		for (int i = 0; i < 1000; i++) {
 			Thread.sleep(4);
 			reportStatusToClient(hugeProcessStatusEvent, "Task 2 @ Step " + i + ":" + System.currentTimeMillis());
 		}
@@ -42,11 +41,6 @@ public class HugeProcessingService {
 	}
 	private void induceException1() throws IllegalArgumentException {
 		if (new Random().nextInt(100) % 7 == 0) {
-			throw new IllegalArgumentException("You are the most unlucky!:" + System.currentTimeMillis());
-		}
-	}
-	private void induceException2() throws IllegalArgumentException {
-		if (new Random().nextInt(100) % 350 == 0) {
 			throw new IllegalArgumentException("You are the most unlucky!:" + System.currentTimeMillis());
 		}
 	}

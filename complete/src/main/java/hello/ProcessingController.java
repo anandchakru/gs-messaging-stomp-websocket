@@ -39,6 +39,25 @@ public class ProcessingController {
 		requests.put(sessionId, hugeProcessStatusEvent);
 		return sessionId;
 	}
+	@GetMapping("/lessAndSlow")
+	public @ResponseBody String processLessAndSlow(HttpSession session) throws InterruptedException {
+		String sessionId = session.getId();
+		System.out.println("Processing ready to start for: " + sessionId);
+		HugeProcessStatusEvent hugeProcessStatusEvent = new HugeProcessStatusEvent(sessionId, "Started");
+		hugeProcessStatusEvent.setGenerationId(UUID.randomUUID().toString().replaceAll("-", ""));
+		requests.put(sessionId, hugeProcessStatusEvent);
+		return sessionId;
+	}
+	@GetMapping("/lotsAndFast")
+	public @ResponseBody String processLotsAndFast(HttpSession session) throws InterruptedException {
+		String sessionId = session.getId();
+		System.out.println("Processing ready to start for: " + sessionId);
+		HugeProcessStatusEvent hugeProcessStatusEvent = new HugeProcessStatusEvent(sessionId, "Started");
+		hugeProcessStatusEvent.setGenerationId(UUID.randomUUID().toString().replaceAll("-", ""));
+		hugeProcessStatusEvent.setProcessNumber(2);
+		requests.put(sessionId, hugeProcessStatusEvent);
+		return sessionId;
+	}
 	@GetMapping("/logout")
 	public @ResponseBody String logout(HttpSession session) {
 		String sessionId = session.getId();
@@ -62,11 +81,21 @@ public class ProcessingController {
 	}
 	@EventListener
 	public void handleSessionConnectedEvent(SessionConnectedEvent sessionConnectedEvent) {
-		String sessionId = sessionConnectedEvent.getUser().getName();
 		scheduler.submit(() -> {
+			if (sessionConnectedEvent.getUser() == null || sessionConnectedEvent.getUser().getName() == null) {
+				return;
+			}
+			String sessionId = sessionConnectedEvent.getUser().getName();
 			HugeProcessStatusEvent hugeProcessStatusEvent = requests.get(sessionId);
+			if (hugeProcessStatusEvent == null) {
+				return;
+			}
 			try {
-				processingService.process2(hugeProcessStatusEvent);
+				if (hugeProcessStatusEvent.getProcessNumber() == 2) {
+					processingService.process2(hugeProcessStatusEvent);
+				} else {
+					processingService.process1(hugeProcessStatusEvent);
+				}
 				messagingTemplate.convertAndSend("/topic/public",
 						new WebSocketRsp("Public completed: " + hugeProcessStatusEvent.getSessionId() + "!"));
 			} catch (InterruptedException e) {

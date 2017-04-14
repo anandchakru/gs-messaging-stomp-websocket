@@ -2,6 +2,8 @@ var stompClient = null;
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
+    $("#connect1").prop("disabled", connected);
+    $("#connect2").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
     if (connected) {
         $("#conversation").show();
@@ -17,24 +19,31 @@ function logout() {
 		showGreeting(userId + ' loggedout');
 	});
 }
-function connect() {
-	$.get("/subscribe4PrivateMsgs", function(userId) {
-	    var socket = new SockJS('/websocketapi');
-	    stompClient = Stomp.over(socket);
-	    stompClient.connect({}, function (frame) {
-	        setConnected(true);
-	        console.log('Connected: ' + frame);
-	        stompClient.subscribe('/topic/public', function (greeting) {
-	            showGreeting('Pub: ' + JSON.parse(greeting.body).content);
-	        });
-	        stompClient.subscribe('/user/queue/private', function (greeting) {
-	            showGreeting('Pri: ' + JSON.parse(greeting.body).content);
-	        });
-	    }, function(message){
-	    	console.log('Server disconnected the WebSocket');
-	    	setConnected(false);
-	    });
+function fnStompSetup(userId){
+    var socket = new SockJS('/websocketapi');
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame) {
+        setConnected(true);
+        console.log('Connected: ' + frame);
+        stompClient.subscribe('/topic/public', function (greeting) {
+            showGreeting('Pub: ' + JSON.parse(greeting.body).content);
+        });
+        stompClient.subscribe('/user/queue/private', function (greeting) {
+            showGreeting('Pri: ' + JSON.parse(greeting.body).content);
+        });
+    }, function(message){
+    	console.log('Server disconnected the WebSocket');
+    	setConnected(false);
     });
+}
+function connect() {
+	$.get("/subscribe4PrivateMsgs", fnStompSetup());
+}
+function connect1() {
+	$.get("/lessAndSlow", fnStompSetup());
+}
+function connect2() {
+	$.get("/lotsAndFast", fnStompSetup());
 }
 
 function disconnect() {
@@ -62,6 +71,8 @@ $(function () {
         e.preventDefault();
     });
     $( "#connect" ).click(function() { connect(); });
+    $( "#connect1" ).click(function() { connect1(); });
+    $( "#connect2" ).click(function() { connect2(); });
     $( "#disconnect" ).click(function() { disconnect(); });
     $( "#send" ).click(function() { sendName(); });
     $( "#sendPrivate" ).click(function() { sendPrivateMsg(); });
